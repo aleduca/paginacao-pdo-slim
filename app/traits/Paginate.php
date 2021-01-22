@@ -24,7 +24,16 @@ trait Paginate
 
     public function totalPages($total)
     {
-        return ceil($total / $this->limit);
+        return floor($total / $this->limit);
+    }
+
+    private function queryString()
+    {
+        if (isset($_SERVER['QUERY_STRING'])) {
+            $str = preg_replace("/(\?|&)?page=[0-9]/i", '', $_SERVER['QUERY_STRING']);
+            $str = str_replace(['?', '&'], ['', ''], $str);
+            return (strlen($str) === 0) ? '' : $str . '&';
+        }
     }
 
     public function renderLinks($totalRegisters)
@@ -41,23 +50,25 @@ trait Paginate
             $endLinks = $this->currentPage + $this->linksPerPage;
         }
 
+        $query = $this->queryString();
+
         $links = '<ul class="pagination">';
 
         if ($this->currentPage > 1) {
             $previousPage = $this->currentPage - 1;
-            $links .= "<li class='page-item'> <a class='page-link' href='?page=1'>First</a></li>";
-            $links .= "<li class='page-item'> <a class='page-link' href='?page={$previousPage}'>Previous</a></li>";
+            $links .= "<li class='page-item'> <a class='page-link' href='?{$query}page=1'>First</a></li>";
+            $links .= "<li class='page-item'> <a class='page-link' href='?{$query}page={$previousPage}'>Previous</a></li>";
         }
 
         for ($i = $startLinks; $i <= $endLinks ; $i++) {
             $active = $this->currentPage == $i ? 'active' : '';
-            $links .= "<li class='page-item {$active}'> <a class='page-link' href='?page={$i}'> {$i} </a></li>";
+            $links .= "<li class='page-item {$active}'> <a class='page-link' href='?{$query}page={$i}'> {$i} </a></li>";
         }
 
         if ($this->currentPage < $totalPages) {
             $nextPage = $this->currentPage + 1;
-            $links .= "<li class='page-item'> <a class='page-link' href='?page={$nextPage}'>Next</a></li>";
-            $links .= "<li class='page-item'> <a class='page-link' href='?page={$totalPages}'>Last</a></li>";
+            $links .= "<li class='page-item'> <a class='page-link' href='?{$query}page={$nextPage}'>Next</a></li>";
+            $links .= "<li class='page-item'> <a class='page-link' href='?{$query}page={$totalPages}'>Last</a></li>";
         }
 
         $links .= '</ul>';

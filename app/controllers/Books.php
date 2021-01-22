@@ -15,7 +15,7 @@ class Books extends Base
 
     public function index($request, $response)
     {
-        $books = $this->book->setLimit(20)->setCurrentPage()->books();
+        $books = $this->book->setLimit(20)->setCurrentPage()->books('Harry');
         $links = $this->book->renderLinks($books['total']);
 
         return $this->getTwig()->render($response, $this->setView('site/books'), [

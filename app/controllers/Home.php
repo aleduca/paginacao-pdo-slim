@@ -16,10 +16,13 @@ class Home extends Base
 
     public function index($request, $response)
     {
-        $books = $this->book->setLimit(20)->setCurrentPage()->books();
+        $searched = $_GET['s'] ?? '';
+        $books = $this->book->setLimit(20)->setCurrentPage()->books($searched);
         $links = $this->book->renderLinks($books['total']);
 
         $message = Flash::get('message');
+
+        // var_dump($_SERVER['QUERY_STRING']);
 
         return $this->getTwig()->render($response, $this->setView('site/home'), [
             'title' => 'Home',
