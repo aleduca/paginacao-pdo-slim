@@ -30,7 +30,7 @@ trait Paginate
     private function queryString()
     {
         if (isset($_SERVER['QUERY_STRING'])) {
-            $str = preg_replace("/(\?|&)?page=[0-9]/i", '', $_SERVER['QUERY_STRING']);
+            $str = preg_replace("/(\?|&)?page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
             $str = str_replace(['?', '&'], ['', ''], $str);
             return (strlen($str) === 0) ? '' : $str . '&';
         }
